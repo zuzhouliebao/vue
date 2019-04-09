@@ -1,0 +1,11 @@
+
+input.data-v-ab318e10 {
+	height: 50px;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 5px;
+}
+.nav.data-v-ab318e10 {
+	color: #00b26a;
+	margin-top: 15px;
+}
+
