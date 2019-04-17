@@ -143,11 +143,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
 {
   data: function data() {
     return {
       article: {
         aId: 0,
+        uId: 0,
         title: '',
         content: '',
         avatar: '',
@@ -155,58 +164,119 @@ __webpack_require__.r(__webpack_exports__);
         createTime: '' },
 
       comments: [],
-      imgs: [],
-      comment: '' };
+      content: '',
+      userId: uni.getStorageSync('login_key').userId,
+      followed: false };
 
   },
   onLoad: function onLoad(option) {
-    //向上个界面传递参数
-    console.log(option.aId);
-    this.aId = option.aId;
+    //option为object类型，会序列化上个页面传递的参数
+    this.article.aId = option.aId;
   },
   onShow: function onShow() {
+    this.getArticle();
+  },
+  onPullDownRefresh: function onPullDownRefresh() {
     this.getArticle();
   },
   methods: {
     getArticle: function getArticle() {
       var _this = this;
       uni.request({
-        url: this.apiServer + '/article/' + this.aId,
+        url: this.apiServer + '/article/' + this.article.aId,
         method: 'GET',
         header: { 'content-type': 'application/x-www-form-urlencoded' },
+        data: {
+          userId: this.userId },
+
         success: function success(res) {
-          console.log(res.data.data.article.title);
+          // console.log(res.data.data.article);
+          _this.article.aId = res.data.data.article.id;
+          _this.article.uId = res.data.data.article.uid;
           _this.article.title = res.data.data.article.title;
           _this.article.content = res.data.data.article.content;
           _this.article.nickname = res.data.data.article.nickname;
           _this.article.avatar = res.data.data.article.avatar;
           _this.article.createTime = res.data.data.article.createTime;
           _this.comments = res.data.data.comments;
-          _this.imgs = res.data.data.imgs;
+          if (res.data.data.followed === '已关注') {
+            _this.followed = true;
+          }
         },
         complete: function complete() {
           uni.stopPullDownRefresh();
         } });
 
     },
-    handleTime: function handleTime(datetime) {
-      var date = new Date(datetime);
-      var Y = date.getFullYear() + '-';
-      var M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-';
-      var D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
-      var h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
-      var m = date.getMinutes() < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
-      var s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-      return Y + M + D + h + m + s;
+    handleTime: function handleTime(date) {
+      var d = new Date(date);
+      var year = d.getFullYear();
+      var month = d.getMonth() + 1;
+      var day = d.getDate() < 10 ? '0' + d.getDate() : '' + d.getDate();
+      var hour = d.getHours() < 10 ? '0' + d.getHours() : '' + d.getHours();
+      var minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : '' + d.getMinutes();
+      var seconds = d.getSeconds() < 10 ? '0' + d.getSeconds() : '' + d.getSeconds();
+      return year + '-' + month + '-' + day + ' ' + hour + ':' + minutes;
     },
-    handleContent: function handleContent(msg) {
-      var description = msg;
-      description = description.replace(/(\n)/g, "");
-      description = description.replace(/(\t)/g, "");
-      description = description.replace(/(\r)/g, "");
-      description = description.replace(/<\/?[^>]*>/g, "");
-      description = description.replace(/\s*/g, "");
-      return description;
+    send: function send() {var _this2 = this;
+      console.log('评论人编号：' + this.userId + ',文章编号：' + this.article.aId + '，评论内容：' + this.content);
+      uni.request({
+        url: this.apiServer + '/comment/add',
+        method: 'POST',
+        header: { 'content-type': 'application/x-www-form-urlencoded' },
+        data: {
+          aId: this.article.aId,
+          uId: this.userId,
+          content: this.content },
+
+        success: function success(res) {
+          if (res.data.code === 0) {
+            uni.showToast({
+              title: '评论成功' });
+
+            _this2.getArticle();
+            _this2.content = '';
+          }
+        } });
+
+    },
+    follow: function follow() {var _this3 = this;
+      uni.request({
+        url: this.apiServer + '/follow/add',
+        method: 'POST',
+        header: { 'content-type': 'application/x-www-form-urlencoded' },
+        data: {
+          fromUId: this.userId,
+          toUId: this.article.uId },
+
+        success: function success(res) {
+          if (res.data.code === 0) {
+            uni.showToast({
+              title: '关注成功' });
+
+            _this3.followed = true;
+          }
+        } });
+
+    },
+    cancelFollow: function cancelFollow() {var _this4 = this;
+      uni.request({
+        url: this.apiServer + '/follow/cancel',
+        method: 'POST',
+        header: { 'content-type': 'application/x-www-form-urlencoded' },
+        data: {
+          fromUId: this.userId,
+          toUId: this.article.uId },
+
+        success: function success(res) {
+          if (res.data.code === 0) {
+            uni.showToast({
+              title: '已取消关注' });
+
+            _this4.followed = false;
+          }
+        } });
+
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
@@ -240,24 +310,57 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "view",
-    { staticClass: "content" },
+    { staticClass: "container" },
     [
-      _c("text", { staticClass: "article-title" }, [
-        _vm._v(_vm._s(_vm.article.title))
+      _c("view", { staticClass: "article-title" }, [
+        _c("text", { staticClass: "article-title1" }, [
+          _vm._v(_vm._s(_vm.article.title))
+        ])
       ]),
       _c("view", { staticClass: "article-info" }, [
-        _c("image", {
-          staticClass: "avatar small",
-          attrs: { src: _vm.article.avatar }
-        }),
-        _c("text", [_vm._v(_vm._s(_vm.article.nickname))]),
-        _c("text", { staticClass: "info-text" }, [
-          _vm._v(_vm._s(_vm.handleTime(_vm.article.createTime)))
-        ])
+        _c("view", { staticClass: "left" }, [
+          _c("image", {
+            staticClass: "avatar_small",
+            attrs: { src: _vm.article.avatar }
+          }),
+          _c("text", [_vm._v(_vm._s(_vm.article.nickname))]),
+          _c("text", { staticClass: "info-text" }, [
+            _vm._v(_vm._s(_vm.handleTime(_vm.article.createTime)))
+          ])
+        ]),
+        _c(
+          "view",
+          { staticClass: "right" },
+          [
+            _vm.userId != _vm.article.uId && !_vm.followed
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "green-btn follow-btn cancel",
+                    attrs: { eventid: "71b2c76b-0" },
+                    on: { tap: _vm.follow }
+                  },
+                  [_vm._v("关注")]
+                )
+              : _vm._e(),
+            _vm.userId != _vm.article.uId && _vm.followed
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "green-btn follow-btn cancel",
+                    attrs: { eventid: "71b2c76b-1" },
+                    on: { tap: _vm.cancelFollow }
+                  },
+                  [_vm._v("取消")]
+                )
+              : _vm._e()
+          ],
+          1
+        )
       ]),
       _c(
         "view",
-        { staticClass: "grace-text" },
+        { staticClass: "grace-text", staticStyle: { "margin-top": "10px" } },
         [
           _c("rich-text", {
             attrs: {
@@ -269,27 +372,23 @@ var render = function() {
         ],
         1
       ),
-      _c("p", { staticClass: "info-text" }, [
-        _vm._v("评论" + _vm._s(_vm.comments.length))
+      _c("text", { staticClass: "info-text" }, [
+        _vm._v("评论:" + _vm._s(_vm.comments.length))
       ]),
       _vm._l(_vm.comments, function(comment, index) {
         return _c("view", { key: index, staticClass: "comment-item" }, [
           _c("view", { staticClass: "left" }, [
             _c("image", {
-              staticClass: "avatar small",
+              staticClass: "avatar_small",
               attrs: { src: comment.avatar }
             })
           ]),
           _c("view", { staticClass: "right" }, [
-            _c(
-              "view",
-              [
-                _c("p", [_vm._v(_vm._s(comment.nickname))]),
-                _c("text", [_vm._v(_vm._s(_vm.handleContent(comment.content)))])
-              ],
-              1
-            ),
-            _c("view", [
+            _c("text", { staticClass: "right1" }, [
+              _vm._v(_vm._s(comment.nickname))
+            ]),
+            _c("text", [_vm._v(_vm._s(comment.content))]),
+            _c("view", { staticClass: "right1" }, [
               _c("text", { staticStyle: { "margin-right": "10px" } }, [
                 _vm._v(_vm._s(_vm.comments.length - index) + "楼")
               ]),
@@ -303,8 +402,8 @@ var render = function() {
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.comment,
-            expression: "comment"
+            value: _vm.content,
+            expression: "content"
           }
         ],
         staticClass: "uni-input comment-box",
@@ -312,15 +411,15 @@ var render = function() {
           type: "text",
           placeholder: "写下你的评论",
           required: "required",
-          eventid: "71b2c76b-0"
+          eventid: "71b2c76b-2"
         },
-        domProps: { value: _vm.comment },
+        domProps: { value: _vm.content },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.comment = $event.target.value
+            _vm.content = $event.target.value
           }
         }
       }),
@@ -328,7 +427,7 @@ var render = function() {
         "button",
         {
           staticClass: "green-btn",
-          attrs: { eventid: "71b2c76b-1" },
+          attrs: { eventid: "71b2c76b-3" },
           on: { tap: _vm.send }
         },
         [_vm._v("提交")]

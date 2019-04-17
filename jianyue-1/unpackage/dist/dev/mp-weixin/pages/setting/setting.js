@@ -108,9 +108,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
 {
   data: function data() {
     return {};
@@ -149,35 +146,35 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("view", { staticClass: "container" }, [
-    _c(
-      "view",
-      { staticClass: "list" },
-      [
-        _vm._m(0),
-        _vm._m(1),
-        _c(
-          "navigator",
-          { staticClass: "list-item", attrs: { url: "../info/info" } },
-          [_vm._v("个人资料")]
-        ),
-        _c(
-          "view",
-          { staticClass: "list-item" },
-          [
-            _c(
-              "button",
-              {
-                attrs: { type: "primary", eventid: "6e3db34d-0" },
-                on: { tap: _vm.logout }
-              },
-              [_vm._v("退出当前账号")]
-            )
-          ],
-          1
-        )
-      ],
-      1
-    )
+    _c("view", { staticClass: "list" }, [
+      _vm._m(0),
+      _vm._m(1),
+      _c(
+        "view",
+        { staticClass: "list-item" },
+        [
+          _c("navigator", { attrs: { url: "../user_info/user_info" } }, [
+            _vm._v("个人资料")
+          ])
+        ],
+        1
+      ),
+      _c(
+        "view",
+        { staticClass: "list-item" },
+        [
+          _c(
+            "button",
+            {
+              attrs: { type: "primary", eventid: "6e3db34d-0" },
+              on: { tap: _vm.logout }
+            },
+            [_vm._v("退出当前账号")]
+          )
+        ],
+        1
+      )
+    ])
   ])
 }
 var staticRenderFns = [

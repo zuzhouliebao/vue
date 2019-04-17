@@ -85,6 +85,7 @@ var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ "../../../jia
 
 _vue.default.config.productionTip = false;
 _vue.default.prototype.apiServer = 'http://localhost:8080/api';
+
 _App.default.mpType = 'app';
 
 var app = new _vue.default(_objectSpread({},
@@ -103,7 +104,6 @@ app.$mount();
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
-
 {
   onLaunch: function onLaunch() {
     console.log('App Launch');

@@ -126,16 +126,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
-
-
-
-
-
 {
   data: function data() {
     return {
@@ -146,14 +136,11 @@ __webpack_require__.r(__webpack_exports__);
 
   },
   onLoad: function onLoad() {
-    uni.setNavigationBarTitle({
-      title: '登录' });
 
   },
   methods: {
     signIn: function signIn(userDTO) {
       var _this = this;
-      // console.log(userDTO.mobile + ',' + userDTO.password);
       uni.request({
         url: this.apiServer + '/user/sign_in',
         method: 'POST',
@@ -180,6 +167,7 @@ __webpack_require__.r(__webpack_exports__);
 
             uni.switchTab({
               url: '../my/my' });
+
 
           }
           //登录失败，弹出各种原因
@@ -293,8 +281,8 @@ var render = function() {
       ),
       _c(
         "navigator",
-        { staticClass: "nav", attrs: { url: "../signup/signup" } },
-        [_vm._v("注册新账号")]
+        { staticClass: "zhuce", attrs: { url: "../signup/signup" } },
+        [_vm._v("用户注册")]
       )
     ],
     1

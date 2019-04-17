@@ -3,11 +3,8 @@
 		<view class="list">
 			<view class="list-item"><text>文章推送</text></view>
 			<view class="list-item"><text>新消息推送</text></view>
-			<navigator url="../info/info" class="list-item">
-	个人资料
-</navigator>
-			<view class="list-item">
-				<button type="primary" @tap="logout">退出当前账号</button>
+			<view class="list-item"><navigator url="../user_info/user_info">个人资料</navigator></view>
+			<view class="list-item"><button type="primary" @tap="logout">退出当前账号</button>
 			</view>
 		</view>
 	</view>

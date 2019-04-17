@@ -156,28 +156,71 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {
   data: function data() {
     return {
-      articles: [] };
+      articles: [],
+      comments: [],
+      userId: uni.getStorageSync('login_key').userId,
+      recommend: true,
+      special: false,
+      serialize: false };
 
   },
   onLoad: function onLoad() {
     this.getArticles();
+
   },
   onShow: function onShow() {},
   onPullDownRefresh: function onPullDownRefresh() {
     this.getArticles();
+
   },
   methods: {
+    clickshow: function clickshow() {
+      this.recommend = true;
+      this.special = false;
+      this.serialize = false;
+    },
+    clickshow2: function clickshow2() {
+      this.recommend = false;
+      this.special = true;
+      this.serialize = false;
+    },
+    clickshow3: function clickshow3() {
+      this.recommend = false;
+      this.special = false;
+      this.serialize = true;
+    },
     getArticles: function getArticles() {
       var _this = this;
       uni.request({
         url: this.apiServer + '/article/list',
         method: 'GET',
-        header: {
-          'content-type': 'application/x-www.form-urlencoded' },
-
+        header: { 'content-type': 'application/x-www-form-urlencoded' },
         success: function success(res) {
           _this.articles = res.data.data;
         },
@@ -191,24 +234,23 @@ __webpack_require__.r(__webpack_exports__);
         url: '../article_detail/article_detail?aId=' + aId });
 
     },
-    handleTime: function handleTime(datetime) {
-      var date = new Date(datetime);
-      var Y = date.getFullYear() + '-';
-      var M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-';
-      var D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
-      var h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
-      var m = date.getMinutes() < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
-      var s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-      return Y + M + D + h + m + s;
+    handleContent: function handleContent(content) {
+      content = content.replace(/(\n)/g, "");
+      content = content.replace(/(\t)/g, "");
+      content = content.replace(/(\r)/g, "");
+      content = content.replace(/<\/?[^>]*>/g, "");
+      content = content.replace(/\s*/g, "");
+      return content.substring(0, 50);
     },
-    handleContent: function handleContent(msg) {
-      var description = msg;
-      description = description.replace(/(\n)/g, "");
-      description = description.replace(/(\t)/g, "");
-      description = description.replace(/(\r)/g, "");
-      description = description.replace(/<\/?[^>]*>/g, "");
-      description = description.replace(/\s*/g, "");
-      return description;
+    handleTime: function handleTime(date) {
+      var d = new Date(date);
+      var year = d.getFullYear();
+      var month = d.getMonth() + 1;
+      var day = d.getDate() < 10 ? '0' + d.getDate() : '' + d.getDate();
+      var hour = d.getHours() < 10 ? '0' + d.getHours() : '' + d.getHours();
+      var minutes = d.getMinutes() < 10 ? '0' + d.getMinutes() : '' + d.getMinutes();
+      var seconds = d.getSeconds() < 10 ? '0' + d.getSeconds() : '' + d.getSeconds();
+      return year + '-' + month + '-' + day + ' ' + hour + ':' + minutes;
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
@@ -236,8 +278,276 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function () {}
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "view",
+    { staticClass: "container" },
+    [
+      _c("view", { staticClass: "top" }, [
+        _c("view", { staticClass: "top-left" }, [
+          _c("view", { staticClass: "top-left-box" }, [
+            _c(
+              "view",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: !_vm.recommend,
+                    expression: "!recommend"
+                  }
+                ],
+                staticClass: "box"
+              },
+              [
+                _c(
+                  "navigator",
+                  {
+                    attrs: { eventid: "54a2cdde-0" },
+                    on: {
+                      tap: function($event) {
+                        _vm.clickshow()
+                      }
+                    }
+                  },
+                  [_vm._v("推荐")]
+                )
+              ],
+              1
+            ),
+            _c(
+              "view",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.recommend,
+                    expression: "recommend"
+                  }
+                ],
+                staticClass: "box navigator"
+              },
+              [_c("navigator", [_vm._v("推荐")])],
+              1
+            )
+          ]),
+          _c("view", { staticClass: "top-left-box" }, [
+            _c(
+              "view",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: !_vm.special,
+                    expression: "!special"
+                  }
+                ],
+                staticClass: "box"
+              },
+              [
+                _c(
+                  "navigator",
+                  {
+                    attrs: { eventid: "54a2cdde-1" },
+                    on: {
+                      tap: function($event) {
+                        _vm.clickshow2()
+                      }
+                    }
+                  },
+                  [_vm._v("专题")]
+                )
+              ],
+              1
+            ),
+            _c(
+              "view",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.special,
+                    expression: "special"
+                  }
+                ],
+                staticClass: "box navigator"
+              },
+              [_c("navigator", [_vm._v("专题")])],
+              1
+            )
+          ]),
+          _c("view", { staticClass: "top-left-box" }, [
+            _c(
+              "view",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: !_vm.serialize,
+                    expression: "!serialize"
+                  }
+                ],
+                staticClass: "box"
+              },
+              [
+                _c(
+                  "navigator",
+                  {
+                    attrs: { eventid: "54a2cdde-2" },
+                    on: {
+                      tap: function($event) {
+                        _vm.clickshow3()
+                      }
+                    }
+                  },
+                  [_vm._v("连载")]
+                )
+              ],
+              1
+            ),
+            _c(
+              "view",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.serialize,
+                    expression: "serialize"
+                  }
+                ],
+                staticClass: "box navigator"
+              },
+              [_c("navigator", [_vm._v("连载")])],
+              1
+            )
+          ])
+        ]),
+        _c("view", { staticClass: "top-right" }, [
+          _c(
+            "view",
+            { staticClass: "search" },
+            [
+              _c("navigator", { attrs: { url: "../search/search" } }, [
+                _c("image", { attrs: { src: "../../static/sousuo.png" } })
+              ])
+            ],
+            1
+          )
+        ])
+      ]),
+      _vm._l(_vm.articles, function(article, index) {
+        return _c(
+          "view",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.recommend,
+                expression: "recommend"
+              }
+            ],
+            key: index,
+            staticClass: "article"
+          },
+          [
+            _c("view", { staticClass: "title" }, [
+              _c(
+                "text",
+                {
+                  staticClass: "article-title",
+                  attrs: { eventid: "54a2cdde-3-" + index },
+                  on: {
+                    tap: function($event) {
+                      _vm.gotoDetail(article.id)
+                    }
+                  }
+                },
+                [_vm._v(_vm._s(article.title))]
+              )
+            ]),
+            article.imgs.length >= 3
+              ? _c("view", { staticClass: "one" }, [
+                  _c(
+                    "view",
+                    { staticClass: "thumbnail-box" },
+                    _vm._l(article.imgs, function(item, index1) {
+                      return _c(
+                        "view",
+                        { key: index1, staticClass: "thumbnail-item" },
+                        [
+                          _c("image", {
+                            staticClass: "img",
+                            attrs: { src: item.imgUrl }
+                          })
+                        ]
+                      )
+                    })
+                  )
+                ])
+              : article.imgs.length >= 1
+              ? _c("view", { staticClass: "two" }, [
+                  _c("view", { staticClass: "text-img-box" }, [
+                    _c("view", { staticClass: "left" }, [
+                      _c("text", { staticClass: "info-text2" }, [
+                        _vm._v(_vm._s(_vm.handleContent(article.content)))
+                      ])
+                    ]),
+                    _c("view", { staticClass: "right" }, [
+                      _c("image", {
+                        staticClass: "img",
+                        attrs: {
+                          src: article.imgs[article.imgs.length - 1].imgUrl
+                        }
+                      })
+                    ])
+                  ])
+                ])
+              : _c("view", { staticClass: "text-box" }, [
+                  _c("text", [_vm._v(_vm._s(article.title))])
+                ]),
+            _c("view", { staticClass: "article-info" }, [
+              _c("image", {
+                staticClass: "avatar1",
+                attrs: { src: article.avatar }
+              }),
+              _c("text", { staticClass: "info-text" }, [
+                _vm._v(_vm._s(article.nickname))
+              ]),
+              _c("text", { staticClass: "info-text1" }, [
+                _vm._v(_vm._s(_vm.handleTime(article.createTime)))
+              ]),
+              _c("text", { staticClass: "info-text" }, [
+                _vm._v("评论" + _vm._s(_vm.comments.length))
+              ])
+            ])
+          ]
+        )
+      }),
+      _c(
+        "navigator",
+        { attrs: { url: "../write/write", "hover-class": "navigator-hover" } },
+        [
+          _c("button", { staticClass: "circle-btn" }, [
+            _c("text", { staticClass: "icon-text" }, [_vm._v("＋")])
+          ])
+        ],
+        1
+      )
+    ],
+    2
+  )
+}
 var staticRenderFns = []
+render._withStripped = true
 
 
 

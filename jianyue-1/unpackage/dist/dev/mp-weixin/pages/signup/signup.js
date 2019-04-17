@@ -131,21 +131,22 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 {
   data: function data() {
     return {
-      mobile: '',
-      verifyCode: '',
       show: true,
       count: '',
-      timer: null };
+      timer: null,
+      mobile: '',
+      verifyCode: '' };
 
   },
   onLoad: function onLoad() {},
   methods: {
-    getVerifyCode: function getVerifyCode() {var _this2 = this;
+    getCode: function getCode() {var _this2 = this;
+      var TIME_COUNT = 60;
       var _this = this;
-      var TIME_COUNT = 20;
       uni.request({
         url: this.apiServer + '/user/verify',
         method: 'POST',
@@ -166,21 +167,21 @@ __webpack_require__.r(__webpack_exports__);
               content: res.data.msg });
 
           }
-          if (!_this2.timer) {
-            _this2.count = TIME_COUNT;
-            _this2.show = false;
-            _this2.timer = setInterval(function () {
-              if (_this2.count > 0 && _this2.count <= TIME_COUNT) {
-                _this2.count--;
-              } else {
-                _this2.show = true;
-                clearInterval(_this2.timer);
-                _this2.timer = null;
-              }
-            }, 1000);
-          }
         } });
 
+      if (!this.timer) {
+        this.count = TIME_COUNT;
+        this.show = false;
+        this.timer = setInterval(function () {
+          if (_this2.count > 0 && _this2.count <= TIME_COUNT) {
+            _this2.count--;
+          } else {
+            _this2.show = true;
+            clearInterval(_this2.timer);
+            _this2.timer = null;
+          }
+        }, 1000);
+      }
     },
     checkCode: function checkCode() {
       var _this = this;
@@ -242,106 +243,100 @@ var render = function() {
     "view",
     { staticClass: "container" },
     [
-      _c(
-        "view",
-        { staticClass: "sign-box" },
-        [
+      _c("view", { staticClass: "shang" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.mobile,
+              expression: "mobile"
+            }
+          ],
+          attrs: {
+            placeholder: "输入手机号",
+            type: "number",
+            required: "required",
+            eventid: "545adeab-0"
+          },
+          domProps: { value: _vm.mobile },
+          on: {
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.mobile = $event.target.value
+            }
+          }
+        })
+      ]),
+      _c("view", { staticClass: "xia" }, [
+        _c("view", { staticClass: "left" }, [
           _c("input", {
             directives: [
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.mobile,
-                expression: "mobile"
+                value: _vm.verifyCode,
+                expression: "verifyCode"
               }
             ],
-            staticClass: "uni-input left",
             attrs: {
+              placeholder: "输入验证码",
               type: "number",
-              placeholder: "输入手机号",
               required: "required",
-              eventid: "545adeab-0"
+              eventid: "545adeab-1"
             },
-            domProps: { value: _vm.mobile },
+            domProps: { value: _vm.verifyCode },
             on: {
               input: function($event) {
                 if ($event.target.composing) {
                   return
                 }
-                _vm.mobile = $event.target.value
+                _vm.verifyCode = $event.target.value
               }
             }
-          }),
+          })
+        ]),
+        _c("view", { staticClass: "right" }, [
           _c(
-            "button",
+            "span",
             {
-              staticClass: "green-btn small-btn right",
-              attrs: { disabled: !_vm.show, eventid: "545adeab-1" },
-              on: { tap: _vm.getVerifyCode }
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.show,
+                  expression: "show"
+                }
+              ],
+              staticClass: "text",
+              attrs: { eventid: "545adeab-2" },
+              on: {
+                tap: function($event) {
+                  _vm.getCode()
+                }
+              }
             },
-            [
-              _c(
-                "span",
+            [_vm._v("获取验证码")]
+          ),
+          _c(
+            "span",
+            {
+              directives: [
                 {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value: _vm.show,
-                      expression: "show"
-                    }
-                  ],
-                  staticClass: "small-btn right"
-                },
-                [_vm._v("获取验证码")]
-              ),
-              _c(
-                "span",
-                {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value: !_vm.show,
-                      expression: "!show"
-                    }
-                  ],
-                  staticClass: "small-btn right"
-                },
-                [_vm._v(_vm._s(_vm.count) + "s后再获取")]
-              )
-            ]
+                  name: "show",
+                  rawName: "v-show",
+                  value: !_vm.show,
+                  expression: "!show"
+                }
+              ],
+              staticClass: "count"
+            },
+            [_vm._v(_vm._s(_vm.count) + "s后重新获得")]
           )
-        ],
-        1
-      ),
-      _c("hr"),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.verifyCode,
-            expression: "verifyCode"
-          }
-        ],
-        staticClass: "uni-input",
-        attrs: {
-          type: "number",
-          placeholder: "输入验证码",
-          required: "required",
-          eventid: "545adeab-2"
-        },
-        domProps: { value: _vm.verifyCode },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.verifyCode = $event.target.value
-          }
-        }
-      }),
+        ])
+      ]),
       _c(
         "button",
         {
